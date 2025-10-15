@@ -52,14 +52,12 @@ export default function HomePage() {
                   </Link>
                 </ScaleIn>
                 <ScaleIn delay={0.4}>
-                  <a
-                    href="https://github.com/heritsilavo/distributeur-3d"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    href="/distributeur"
                     className="px-8 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all transform hover:scale-105 border border-gray-200 dark:border-gray-700"
                   >
-                    Voir sur GitHub
-                  </a>
+                    Acceder au distributeur 3D
+                  </Link>
                 </ScaleIn>
               </div>
             </div>
