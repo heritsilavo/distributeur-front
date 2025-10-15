@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@utility main {
+    @apply w-screen h-screen flex items-center
+        justify-center bg-amber-50 dark:bg-gray-900;
+}
+
+@utility canvas {
+    @apply w-[1000px] h-[800px] border border-2 border-white bg-white dark:bg-gray-800
+        rounded-lg shadow-lg;
+}
