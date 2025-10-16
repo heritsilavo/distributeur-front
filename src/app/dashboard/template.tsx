@@ -9,7 +9,6 @@ interface DashboardTemplateProps {
     children: React.ReactNode;
 }
 
-// Composant pour les boutons de la sidebar
 interface SidebarButtonProps {
     icon: string;
     label: string;
@@ -48,12 +47,11 @@ export default function DashboardTemplate({ children }: DashboardTemplateProps) 
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    // Exemple de boutons - à adapter selon vos besoins
     const menuButtons = [
-        { id: "dashboard", url:"/dashboard", icon: "📊", label: "Tableau de bord" },
         { id: "boissons", url:"/dashboard/boissons", icon: "🧃", label: "Gérer les boissons" },
         { id: "caisse", url:"/dashboard/caisse", icon: "📦", label: "Caisse" },
         { id: "historique", url:"/dashboard/historique", icon: "⚙️", label: "Historique d'achat" },
+        { id: "dashboard", url:"/dashboard", icon: "📊", label: "Tableau de bord" },
     ];
 
     const handleButtonClick = (buttonId: string) => {
