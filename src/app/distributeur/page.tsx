@@ -3,6 +3,7 @@ import { Canvas } from "@react-three/fiber"
 import "./page.css"
 import { OrbitControls } from "@react-three/drei"
 import { Distributeur3D } from "@/components/Model3D/Distributeur3D"
+import { Physics } from "@react-three/rapier"
 
 export default function DistributeurPage() {
     return (
@@ -49,8 +50,16 @@ export default function DistributeurPage() {
                     intensity={0.5}
                 />
 
-                <OrbitControls enableZoom={true} enableRotate={false}/>
-                <Distributeur3D />
+                <OrbitControls
+                    enableZoom={true}
+                    enableRotate={true}
+                    panSpeed={2}
+                    maxDistance={15}
+                    minDistance={8}
+                />
+                <Physics debug={true} gravity={[0, -9.81, 0]}>
+                    <Distributeur3D />
+                </Physics>
             </Canvas>
         </main>
     )

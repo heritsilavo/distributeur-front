@@ -1,0 +1,202 @@
+{
+    "Etage_1": {
+        "Place_1": {
+            "1": { "isAvailable": false, "typeBoisson": "Coca-Cola" },
+            "2": { "isAvailable": false, "typeBoisson": "Coca-Cola" },
+            "3": { "isAvailable": false, "typeBoisson": "Coca-Cola" },
+            "4": { "isAvailable": true, "typeBoisson": null },
+            "5": { "isAvailable": true, "typeBoisson": null },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        },
+        "Place_2": {
+            "1": { "isAvailable": false, "typeBoisson": "Fanta Orange" },
+            "2": { "isAvailable": false, "typeBoisson": "Fanta Orange" },
+            "3": { "isAvailable": true, "typeBoisson": null },
+            "4": { "isAvailable": true, "typeBoisson": null },
+            "5": { "isAvailable": true, "typeBoisson": null },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        },
+        "Place_3": {
+            "1": { "isAvailable": false, "typeBoisson": "Sprite" },
+            "2": { "isAvailable": false, "typeBoisson": "Sprite" },
+            "3": { "isAvailable": false, "typeBoisson": "Sprite" },
+            "4": { "isAvailable": false, "typeBoisson": "Sprite" },
+            "5": { "isAvailable": false, "typeBoisson": "Sprite" },
+            "6": { "isAvailable": false, "typeBoisson": "Sprite" }
+        },
+        "Place_4": {
+            "1": { "isAvailable": true, "typeBoisson": null },
+            "2": { "isAvailable": true, "typeBoisson": null },
+            "3": { "isAvailable": true, "typeBoisson": null },
+            "4": { "isAvailable": true, "typeBoisson": null },
+            "5": { "isAvailable": true, "typeBoisson": null },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        },
+        "Place_5": {
+            "1": { "isAvailable": false, "typeBoisson": "Ice Tea" },
+            "2": { "isAvailable": true, "typeBoisson": null },
+            "3": { "isAvailable": true, "typeBoisson": null },
+            "4": { "isAvailable": true, "typeBoisson": null },
+            "5": { "isAvailable": true, "typeBoisson": null },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        },
+        "Place_6": {
+            "1": { "isAvailable": false, "typeBoisson": "Orangina" },
+            "2": { "isAvailable": false, "typeBoisson": "Orangina" },
+            "3": { "isAvailable": false, "typeBoisson": "Orangina" },
+            "4": { "isAvailable": false, "typeBoisson": "Orangina" },
+            "5": { "isAvailable": false, "typeBoisson": "Orangina" },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        }
+    },
+    "Etage_2": {
+        "Place_1": {
+            "1": { "isAvailable": false, "typeBoisson": "Coca-Cola Zero" },
+            "2": { "isAvailable": false, "typeBoisson": "Coca-Cola Zero" },
+            "3": { "isAvailable": false, "typeBoisson": "Coca-Cola Zero" },
+            "4": { "isAvailable": false, "typeBoisson": "Coca-Cola Zero" },
+            "5": { "isAvailable": false, "typeBoisson": "Coca-Cola Zero" },
+            "6": { "isAvailable": false, "typeBoisson": "Coca-Cola Zero" }
+        },
+        "Place_2": {
+            "1": { "isAvailable": false, "typeBoisson": "Fanta Citron" },
+            "2": { "isAvailable": false, "typeBoisson": "Fanta Citron" },
+            "3": { "isAvailable": false, "typeBoisson": "Fanta Citron" },
+            "4": { "isAvailable": true, "typeBoisson": null },
+            "5": { "isAvailable": true, "typeBoisson": null },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        },
+        "Place_3": {
+            "1": { "isAvailable": true, "typeBoisson": null },
+            "2": { "isAvailable": true, "typeBoisson": null },
+            "3": { "isAvailable": true, "typeBoisson": null },
+            "4": { "isAvailable": true, "typeBoisson": null },
+            "5": { "isAvailable": true, "typeBoisson": null },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        },
+        "Place_4": {
+            "1": { "isAvailable": false, "typeBoisson": "Dr Pepper" },
+            "2": { "isAvailable": false, "typeBoisson": "Dr Pepper" },
+            "3": { "isAvailable": true, "typeBoisson": null },
+            "4": { "isAvailable": true, "typeBoisson": null },
+            "5": { "isAvailable": true, "typeBoisson": null },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        },
+        "Place_5": {
+            "1": { "isAvailable": false, "typeBoisson": "7Up" },
+            "2": { "isAvailable": false, "typeBoisson": "7Up" },
+            "3": { "isAvailable": false, "typeBoisson": "7Up" },
+            "4": { "isAvailable": false, "typeBoisson": "7Up" },
+            "5": { "isAvailable": true, "typeBoisson": null },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        },
+        "Place_6": {
+            "1": { "isAvailable": false, "typeBoisson": "Pepsi" },
+            "2": { "isAvailable": false, "typeBoisson": "Pepsi" },
+            "3": { "isAvailable": false, "typeBoisson": "Pepsi" },
+            "4": { "isAvailable": false, "typeBoisson": "Pepsi" },
+            "5": { "isAvailable": false, "typeBoisson": "Pepsi" },
+            "6": { "isAvailable": false, "typeBoisson": "Pepsi" }
+        }
+    },
+    "Etage_3": {
+        "Place_1": {
+            "1": { "isAvailable": false, "typeBoisson": "Lipton Ice Tea" },
+            "2": { "isAvailable": true, "typeBoisson": null },
+            "3": { "isAvailable": true, "typeBoisson": null },
+            "4": { "isAvailable": true, "typeBoisson": null },
+            "5": { "isAvailable": true, "typeBoisson": null },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        },
+        "Place_2": {
+            "1": { "isAvailable": false, "typeBoisson": "Schweppes Agrum" },
+            "2": { "isAvailable": false, "typeBoisson": "Schweppes Agrum" },
+            "3": { "isAvailable": false, "typeBoisson": "Schweppes Agrum" },
+            "4": { "isAvailable": false, "typeBoisson": "Schweppes Agrum" },
+            "5": { "isAvailable": false, "typeBoisson": "Schweppes Agrum" },
+            "6": { "isAvailable": false, "typeBoisson": "Schweppes Agrum" }
+        },
+        "Place_3": {
+            "1": { "isAvailable": true, "typeBoisson": null },
+            "2": { "isAvailable": true, "typeBoisson": null },
+            "3": { "isAvailable": true, "typeBoisson": null },
+            "4": { "isAvailable": true, "typeBoisson": null },
+            "5": { "isAvailable": true, "typeBoisson": null },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        },
+        "Place_4": {
+            "1": { "isAvailable": false, "typeBoisson": "Oasis" },
+            "2": { "isAvailable": false, "typeBoisson": "Oasis" },
+            "3": { "isAvailable": false, "typeBoisson": "Oasis" },
+            "4": { "isAvailable": true, "typeBoisson": null },
+            "5": { "isAvailable": true, "typeBoisson": null },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        },
+        "Place_5": {
+            "1": { "isAvailable": false, "typeBoisson": "Canada Dry" },
+            "2": { "isAvailable": false, "typeBoisson": "Canada Dry" },
+            "3": { "isAvailable": true, "typeBoisson": null },
+            "4": { "isAvailable": true, "typeBoisson": null },
+            "5": { "isAvailable": true, "typeBoisson": null },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        },
+        "Place_6": {
+            "1": { "isAvailable": false, "typeBoisson": "Fanta Pomme" },
+            "2": { "isAvailable": false, "typeBoisson": "Fanta Pomme" },
+            "3": { "isAvailable": false, "typeBoisson": "Fanta Pomme" },
+            "4": { "isAvailable": false, "typeBoisson": "Fanta Pomme" },
+            "5": { "isAvailable": false, "typeBoisson": "Fanta Pomme" },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        }
+    },
+    "Etage_4": {
+        "Place_1": {
+            "1": { "isAvailable": true, "typeBoisson": null },
+            "2": { "isAvailable": true, "typeBoisson": null },
+            "3": { "isAvailable": true, "typeBoisson": null },
+            "4": { "isAvailable": true, "typeBoisson": null },
+            "5": { "isAvailable": true, "typeBoisson": null },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        },
+        "Place_2": {
+            "1": { "isAvailable": true, "typeBoisson": null },
+            "2": { "isAvailable": true, "typeBoisson": null },
+            "3": { "isAvailable": true, "typeBoisson": null },
+            "4": { "isAvailable": true, "typeBoisson": null },
+            "5": { "isAvailable": true, "typeBoisson": null },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        },
+        "Place_3": {
+            "1": { "isAvailable": true, "typeBoisson": null },
+            "2": { "isAvailable": true, "typeBoisson": null },
+            "3": { "isAvailable": true, "typeBoisson": null },
+            "4": { "isAvailable": true, "typeBoisson": null },
+            "5": { "isAvailable": true, "typeBoisson": null },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        },
+        "Place_4": {
+            "1": { "isAvailable": true, "typeBoisson": null },
+            "2": { "isAvailable": true, "typeBoisson": null },
+            "3": { "isAvailable": true, "typeBoisson": null },
+            "4": { "isAvailable": true, "typeBoisson": null },
+            "5": { "isAvailable": true, "typeBoisson": null },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        },
+        "Place_5": {
+            "1": { "isAvailable": true, "typeBoisson": null },
+            "2": { "isAvailable": true, "typeBoisson": null },
+            "3": { "isAvailable": true, "typeBoisson": null },
+            "4": { "isAvailable": true, "typeBoisson": null },
+            "5": { "isAvailable": true, "typeBoisson": null },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        },
+        "Place_6": {
+            "1": { "isAvailable": true, "typeBoisson": null },
+            "2": { "isAvailable": true, "typeBoisson": null },
+            "3": { "isAvailable": true, "typeBoisson": null },
+            "4": { "isAvailable": true, "typeBoisson": null },
+            "5": { "isAvailable": true, "typeBoisson": null },
+            "6": { "isAvailable": true, "typeBoisson": null }
+        }
+    }
+}
