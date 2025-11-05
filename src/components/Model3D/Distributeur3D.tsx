@@ -1,10 +1,11 @@
 import React, { JSX, useRef } from 'react'
-import { useGLTF } from '@react-three/drei'
+import { useGLTF, Html } from '@react-three/drei'
 import { Group, Mesh } from 'three'
 import { GLTF } from 'three-stdlib'
 import * as THREE from 'three'
 import { CuboidCollider, RigidBody } from '@react-three/rapier'
 import { Canette3D } from './Canette'
+import { EcranListeBoisson } from '../EcranListeBoisson/EcranListeBoisson'
 
 type GLTFResult = GLTF & {
     nodes: {
@@ -65,29 +66,15 @@ type GLTFResult = GLTF & {
 }
 
 interface Scene3DProps {
-    props?: JSX.IntrinsicElements['group']
+    props?: JSX.IntrinsicElements['group'],
+    onClickExpandEcranListeBoisson: () => void,
+    afficherInterfaceAchat: () => void,
+    showHtmlInWebGL: boolean,
 }
 
-export function Scene3D({ props }: Scene3DProps) {
+export function Scene3D({ props, onClickExpandEcranListeBoisson, showHtmlInWebGL, afficherInterfaceAchat }: Scene3DProps) {
     const group = useRef<Group>(null)
     const { nodes, materials } = useGLTF('/distributeur_glb.glb') as unknown as GLTFResult
-
-    // Matériau de verre réaliste optimisé
-    const glassMaterial = new THREE.MeshPhysicalMaterial({
-        color: 0xffffff,
-        metalness: 0,
-        roughness: 0.03,
-        transmission: 0.95,
-        thickness: 0.5,
-        ior: 1.5,
-        clearcoat: 1,
-        clearcoatRoughness: 0.05,
-        transparent: true,
-        opacity: 0, //TODO: remettre à 0.3 après test
-        reflectivity: 0.5,
-        attenuationColor: 0xffffff,
-        attenuationDistance: 0.5,
-    })
 
     return (
         <group ref={group} {...props} dispose={null} rotation={[0, - Math.PI, 0]} position={[-6, -3, 2]} scale={1}>
@@ -122,7 +109,8 @@ export function Scene3D({ props }: Scene3DProps) {
                     material={materials.InsideDistributeurMaterial}
                 />
             </group>
-            <RigidBody type="fixed"> //Colliders distributeur
+
+            <RigidBody type="fixed"> {/* Colliders distributeur */}
                 <CuboidCollider //Back - inside distributeur
                     args={[0, 2, 1.25]}
                     position={[-4.289, 4, 5.9]}
@@ -140,7 +128,6 @@ export function Scene3D({ props }: Scene3DProps) {
                     position={[-5.53, 4, 4.9]}
                     rotation={[0, Math.PI / 2, 0]}
                 />
-
             </RigidBody>
 
             {/* Partie écran/paiement */}
@@ -175,18 +162,66 @@ export function Scene3D({ props }: Scene3DProps) {
                 />
             </group>
 
-            {/* Vitre avec matériau de verre amélioré */}
+            {!showHtmlInWebGL && <Html
+                position={[-6.520, 4.087, 3.518]}
+                rotation={[0, Math.PI, 0]}
+                transform
+                distanceFactor={1.5}
+                style={{
+                    width: '305px',
+                    height: '425px',
+                    pointerEvents: 'auto',
+                }}
+            >
+                <div
+                    onClick={afficherInterfaceAchat}
+                    className="cursor-pointer h-full w-full flex flex-col items-center justify-center 
+                   bg-gradient-to-br from-slate-800 via-slate-900 to-black 
+                   border border-blue-600 rounded-xl text-center text-white 
+                   text-2xl font-bold tracking-wide shadow-lg hover:shadow-blue-600/50 
+                   hover:scale-105 transition-all duration-300 animate-pulse-soft"
+                >
+                    <span className="drop-shadow-[0_0_6px_#00b4ff]">
+                        💡 Cliquez ici
+                    </span>
+                    <span className="mt-2 text-3xl text-blue-400 drop-shadow-[0_0_6px_#00b4ff]">
+                        pour acheter
+                    </span>
+                </div>
+            </Html>}
+
+
+            {/* Vitre avec écran HTML intégré */}
             <RigidBody type="fixed">
                 <mesh
                     castShadow
                     receiveShadow
                     geometry={nodes.Vitre.geometry}
-                    material={glassMaterial}
+                    material={new THREE.MeshBasicMaterial({
+                        transparent: true,
+                        opacity: 0,
+                        side: THREE.DoubleSide
+                    })}
                     position={[-4.313, 4.014, 3.518]}
                     rotation={[0, Math.PI / 2, 0]}
                     scale={[0.046, 1.995, 1.292]}
                 />
             </RigidBody>
+
+            {/* Écran HTML sur la vitre */}
+            {!showHtmlInWebGL && <Html
+                position={[-4.280, 4.014, 3.518]}
+                rotation={[0, Math.PI, 0]}
+                transform
+                distanceFactor={1.5}
+                style={{
+                    width: '720px',
+                    height: '1100px',
+                    pointerEvents: 'auto'
+                }}
+            >
+                <EcranListeBoisson onExpandClick={onClickExpandEcranListeBoisson} />
+            </Html>}
 
             {/* Base/Plane */}
             <RigidBody type="fixed">
