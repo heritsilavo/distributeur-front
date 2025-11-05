@@ -60,76 +60,79 @@ export default function DashboardPage() {
   const totalBoissonsVendues = dataDate.reduce((sum, item) => sum + item.count, 0);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8 transition-colors">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-gray-900">Tableau de bord</h1>
-          <p className="text-gray-500 mt-1">Vue d'ensemble des ventes et statistiques</p>
+          <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100">Tableau de bord</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Vue d'ensemble des ventes et statistiques</p>
         </div>
 
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-6 transition-colors">
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <TrendingUp className="text-blue-600" size={24} />
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center transition-colors">
+                <TrendingUp className="text-blue-600 dark:text-blue-400" size={24} />
               </div>
             </div>
-            <h2 className="text-sm font-medium text-gray-600">Total des ventes</h2>
-            <p className="text-3xl font-semibold text-gray-900 mt-2">
+            <h2 className="text-sm font-medium text-gray-600 dark:text-gray-300">Total des ventes</h2>
+            <p className="text-3xl font-semibold text-gray-900 dark:text-gray-100 mt-2">
               {total.toLocaleString()} Ar
             </p>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-6 transition-colors">
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <Package className="text-green-600" size={24} />
+              <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center transition-colors">
+                <Package className="text-green-600 dark:text-green-400" size={24} />
               </div>
             </div>
-            <h2 className="text-sm font-medium text-gray-600">Boissons vendues</h2>
-            <p className="text-3xl font-semibold text-gray-900 mt-2">
+            <h2 className="text-sm font-medium text-gray-600 dark:text-gray-300">Boissons vendues</h2>
+            <p className="text-3xl font-semibold text-gray-900 dark:text-gray-100 mt-2">
               {totalBoissonsVendues}
             </p>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-6 transition-colors">
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Clock className="text-purple-600" size={24} />
+              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center transition-colors">
+                <Clock className="text-purple-600 dark:text-purple-400" size={24} />
               </div>
             </div>
-            <h2 className="text-sm font-medium text-gray-600">Dernière mise à jour</h2>
-            <p className="text-lg font-medium text-gray-900 mt-2">{now}</p>
+            <h2 className="text-sm font-medium text-gray-600 dark:text-gray-300">Dernière mise à jour</h2>
+            <p className="text-lg font-medium text-gray-900 dark:text-gray-100 mt-2">{now}</p>
           </div>
         </div>
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Chart 1: Montant par boisson */}
-          <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-6 transition-colors">
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">Ventes par boisson</h2>
-              <p className="text-sm text-gray-500 mt-1">Montant total généré par produit</p>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Ventes par boisson</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Montant total généré par produit</p>
             </div>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={dataBoisson}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-600" />
                 <XAxis 
                   dataKey="name" 
                   tick={{ fontSize: 12 }}
                   stroke="#9ca3af"
+                  className="dark:stroke-gray-400"
                 />
                 <YAxis 
                   tick={{ fontSize: 12 }}
                   stroke="#9ca3af"
+                  className="dark:stroke-gray-400"
                 />
                 <Tooltip 
                   contentStyle={{
                     backgroundColor: 'white',
                     border: '1px solid #e5e7eb',
-                    borderRadius: '8px'
+                    borderRadius: '8px',
+                    color: '#1f2937'
                   }}
                   formatter={(value: number) => `${value.toLocaleString()} Ar`}
                 />
@@ -144,28 +147,31 @@ export default function DashboardPage() {
           </div>
 
           {/* Chart 2: Ventes par jour */}
-          <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-6 transition-colors">
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">Ventes quotidiennes</h2>
-              <p className="text-sm text-gray-500 mt-1">Nombre de boissons vendues par jour</p>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Ventes quotidiennes</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Nombre de boissons vendues par jour</p>
             </div>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={dataDate}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-600" />
                 <XAxis 
                   dataKey="date" 
                   tick={{ fontSize: 12 }}
                   stroke="#9ca3af"
+                  className="dark:stroke-gray-400"
                 />
                 <YAxis 
                   tick={{ fontSize: 12 }}
                   stroke="#9ca3af"
+                  className="dark:stroke-gray-400"
                 />
                 <Tooltip 
                   contentStyle={{
                     backgroundColor: 'white',
                     border: '1px solid #e5e7eb',
-                    borderRadius: '8px'
+                    borderRadius: '8px',
+                    color: '#1f2937'
                   }}
                 />
                 <Line 

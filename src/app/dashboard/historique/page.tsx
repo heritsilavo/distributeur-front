@@ -62,20 +62,20 @@ export default function HistoriquePage() {
 
   const getModeColor = (mode: string) => {
     const colors: { [key: string]: string } = {
-      'Espèces': 'bg-green-100 text-green-800',
-      'Carte': 'bg-blue-100 text-blue-800',
-      'Mobile': 'bg-purple-100 text-purple-800',
-      'Chèque': 'bg-yellow-100 text-yellow-800',
+      'Espèces': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
+      'Carte': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
+      'Mobile': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100',
+      'Chèque': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
     };
-    return colors[mode] || 'bg-gray-100 text-gray-800';
+    return colors[mode] || 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center transition-colors">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="text-gray-600 mt-4">Chargement des transactions...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400 mx-auto"></div>
+          <p className="text-gray-600 dark:text-gray-400 mt-4">Chargement des transactions...</p>
         </div>
       </div>
     );
@@ -83,70 +83,70 @@ export default function HistoriquePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-sm border border-red-200 p-6 max-w-md w-full">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-red-200 dark:border-red-800 p-6 max-w-md w-full transition-colors">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-              <AlertCircle className="text-red-600" size={20} />
+            <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-lg flex items-center justify-center transition-colors">
+              <AlertCircle className="text-red-600 dark:text-red-400" size={20} />
             </div>
-            <h2 className="text-lg font-semibold text-gray-900">Erreur</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Erreur</h2>
           </div>
-          <p className="text-gray-600">{error}</p>
+          <p className="text-gray-600 dark:text-gray-400">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8 transition-colors">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-gray-900">Historique des ventes</h1>
-          <p className="text-gray-500 mt-1">Consultez toutes vos transactions</p>
+          <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100">Historique des ventes</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Consultez toutes vos transactions</p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-6 transition-colors">
             <div className="flex items-center justify-between mb-2">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <FileText className="text-blue-600" size={20} />
+              <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center transition-colors">
+                <FileText className="text-blue-600 dark:text-blue-400" size={20} />
               </div>
             </div>
-            <h3 className="text-sm font-medium text-gray-600">Total transactions</h3>
-            <p className="text-2xl font-semibold text-gray-900 mt-1">
+            <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">Total transactions</h3>
+            <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mt-1">
               {filteredTransactions.length}
             </p>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-6 transition-colors">
             <div className="flex items-center justify-between mb-2">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <DollarSign className="text-green-600" size={20} />
+              <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center transition-colors">
+                <DollarSign className="text-green-600 dark:text-green-400" size={20} />
               </div>
             </div>
-            <h3 className="text-sm font-medium text-gray-600">Montant total</h3>
-            <p className="text-2xl font-semibold text-gray-900 mt-1">
+            <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">Montant total</h3>
+            <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mt-1">
               {totalMontant.toLocaleString()} Ar
             </p>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-6 transition-colors">
             <div className="flex items-center justify-between mb-2">
-              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                <CreditCard className="text-purple-600" size={20} />
+              <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center transition-colors">
+                <CreditCard className="text-purple-600 dark:text-purple-400" size={20} />
               </div>
             </div>
-            <h3 className="text-sm font-medium text-gray-600">Modes de paiement</h3>
-            <p className="text-2xl font-semibold text-gray-900 mt-1">
+            <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">Modes de paiement</h3>
+            <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mt-1">
               {modesUniques.length}
             </p>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-6 transition-colors">
           <div className="flex flex-col md:flex-row gap-4">
             {/* Search */}
             <div className="flex-1">
@@ -155,7 +155,7 @@ export default function HistoriquePage() {
                 <input
                   type="text"
                   placeholder="Rechercher par ID ou détail..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -167,7 +167,7 @@ export default function HistoriquePage() {
               <div className="relative">
                 <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                 <select
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none appearance-none bg-white"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none appearance-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-all"
                   value={filterMode}
                   onChange={(e) => setFilterMode(e.target.value)}
                 >
@@ -182,14 +182,14 @@ export default function HistoriquePage() {
         </div>
 
         {/* Table */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden transition-colors">
           {filteredTransactions.length === 0 ? (
             <div className="p-12 text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4 transition-colors">
                 <FileText className="text-gray-400" size={24} />
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-1">Aucune transaction</h3>
-              <p className="text-gray-500">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">Aucune transaction</h3>
+              <p className="text-gray-500 dark:text-gray-400">
                 {searchTerm || filterMode !== "tous" 
                   ? "Aucun résultat ne correspond à vos critères" 
                   : "Les transactions apparaîtront ici"}
@@ -199,34 +199,34 @@ export default function HistoriquePage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-gray-50 border-b border-gray-200">
-                    <th className="text-left px-6 py-4 text-sm font-medium text-gray-700">
+                  <tr className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 transition-colors">
+                    <th className="text-left px-6 py-4 text-sm font-medium text-gray-700 dark:text-gray-200">
                       ID
                     </th>
-                    <th className="text-left px-6 py-4 text-sm font-medium text-gray-700">
+                    <th className="text-left px-6 py-4 text-sm font-medium text-gray-700 dark:text-gray-200">
                       Détail
                     </th>
-                    <th className="text-left px-6 py-4 text-sm font-medium text-gray-700">
+                    <th className="text-left px-6 py-4 text-sm font-medium text-gray-700 dark:text-gray-200">
                       Montant
                     </th>
-                    <th className="text-left px-6 py-4 text-sm font-medium text-gray-700">
+                    <th className="text-left px-6 py-4 text-sm font-medium text-gray-700 dark:text-gray-200">
                       Mode de paiement
                     </th>
-                    <th className="text-left px-6 py-4 text-sm font-medium text-gray-700">
+                    <th className="text-left px-6 py-4 text-sm font-medium text-gray-700 dark:text-gray-200">
                       Date et heure
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                   {filteredTransactions.map((tx) => (
-                    <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                    <tr key={tx.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
                         #{tx.id}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-700">
+                      <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
                         {tx.detail}
                       </td>
-                      <td className="px-6 py-4 text-sm font-semibold text-gray-900">
+                      <td className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-gray-100">
                         {tx.montant.toLocaleString()} Ar
                       </td>
                       <td className="px-6 py-4 text-sm">
@@ -234,7 +234,7 @@ export default function HistoriquePage() {
                           {tx.mode}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-700">
+                      <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
                         <div className="flex items-center gap-2">
                           <Calendar size={14} className="text-gray-400" />
                           {new Date(tx.dateTime).toLocaleString('fr-FR', {
@@ -253,7 +253,7 @@ export default function HistoriquePage() {
 
         {/* Footer info */}
         {filteredTransactions.length > 0 && (
-          <div className="text-center text-sm text-gray-500">
+          <div className="text-center text-sm text-gray-500 dark:text-gray-400">
             Affichage de {filteredTransactions.length} transaction(s)
             {(searchTerm || filterMode !== "tous") && ` sur ${transactions.length} au total`}
           </div>
