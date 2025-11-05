@@ -350,5 +350,4 @@ export default function BoissonsPage() {
       </div>
     </div>
   );
-
 }

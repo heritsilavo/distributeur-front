@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, Search, Wallet, QrCode, ShoppingCart, Plus, Minus } from 'lucide-react';
+import { X, Search, Wallet, QrCode, ShoppingCart, Plus, Minus, Loader2 } from 'lucide-react';
+import jsQR from 'jsqr';
 
 interface TypeBoisson {
     idBoisson: number;
@@ -17,10 +18,17 @@ interface Monnaie {
     quantite: string;
 }
 
+interface ErrorState {
+    message: string;
+    type: 'error' | 'warning' | 'info';
+}
+
 export function PaymentModal({ handleClose, onPayementEffectue }: { handleClose: () => void, onPayementEffectue: (mode:"CASH" | "QR", result: any) => void }) {
     const [step, setStep] = useState<1 | 2>(1);
     const [boissons, setBoissons] = useState<TypeBoisson[]>([]);
     const [loading, setLoading] = useState(true);
+    const [paymentLoading, setPaymentLoading] = useState(false);
+    const [qrLoading, setQrLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [budgetMax, setBudgetMax] = useState('');
     const [cart, setCart] = useState<CartItem[]>([]);
@@ -28,19 +36,34 @@ export function PaymentModal({ handleClose, onPayementEffectue }: { handleClose:
     const [monnaies, setMonnaies] = useState<Monnaie[]>([{ valeur: '', quantite: '' }]);
     const [qrFile, setQrFile] = useState<File | null>(null);
     const [qrPreview, setQrPreview] = useState<string | null>(null);
+    const [error, setError] = useState<ErrorState | null>(null);
 
     useEffect(() => {
         fetchBoissons();
     }, []);
 
+    const showError = (message: string, type: 'error' | 'warning' | 'info' = 'error') => {
+        setError({ message, type });
+        // Auto-hide after 5 seconds
+        setTimeout(() => setError(null), 5000);
+    };
+
     const fetchBoissons = async () => {
         try {
+            setLoading(true);
+            setError(null);
             const url = "http://localhost:8080/api/v1/beverages";
             const response = await fetch(url);
+            
+            if (!response.ok) {
+                throw new Error(`Erreur ${response.status}: ${response.statusText}`);
+            }
+            
             const data: TypeBoisson[] = await response.json();
             setBoissons(data);
         } catch (error) {
             console.error('Erreur lors du chargement des boissons:', error);
+            showError('Erreur lors du chargement des boissons. Veuillez réessayer.');
         } finally {
             setLoading(false);
         }
@@ -63,7 +86,10 @@ export function PaymentModal({ handleClose, onPayementEffectue }: { handleClose:
 
     const updateQuantity = (idBoisson: number, newQuantity: number) => {
         const item = boissons.find(b => b.idBoisson === idBoisson);
-        if (item && newQuantity > item.quantiteDispo) return;
+        if (item && newQuantity > item.quantiteDispo) {
+            showError(`Quantité indisponible. Stock restant: ${item.quantiteDispo}`, 'warning');
+            return;
+        }
 
         if (newQuantity <= 0) {
             setCart(cart.filter(item => item.idBoisson !== idBoisson));
@@ -104,15 +130,39 @@ export function PaymentModal({ handleClose, onPayementEffectue }: { handleClose:
         }
     };
 
-    const handleQrUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleQrUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            setQrFile(file);
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setQrPreview(reader.result as string);
-            };
-            reader.readAsDataURL(file);
+            try {
+                setQrLoading(true);
+                setError(null);
+                
+                // Vérifier le type de fichier
+                if (!file.type.startsWith('image/')) {
+                    throw new Error('Veuillez sélectionner une image valide');
+                }
+
+                // Vérifier la taille du fichier (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    throw new Error('L\'image est trop volumineuse. Taille maximale: 5MB');
+                }
+
+                setQrFile(file);
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setQrPreview(reader.result as string);
+                    setQrLoading(false);
+                };
+                reader.onerror = () => {
+                    throw new Error('Erreur lors de la lecture du fichier');
+                };
+                reader.readAsDataURL(file);
+            } catch (error) {
+                setQrLoading(false);
+                showError(error instanceof Error ? error.message : 'Erreur lors du chargement du QR code');
+                // Reset file input
+                e.target.value = '';
+            }
         }
     };
 
@@ -120,40 +170,142 @@ export function PaymentModal({ handleClose, onPayementEffectue }: { handleClose:
         if (paymentMethod === 'liquide') {
             const totalSaisie = getTotalMonnaieSaisie();
             const totalAPayer = getTotalPrice();
-            if (totalSaisie >= totalAPayer) {
-
-                const payementDTO = {
-                    items: cart.map(item => ({
-                        boissonId: item.idBoisson,
-                        quantite: item.quantiteAchat
-                    })),
-                    mode: "CASH",
-                    compteQR: null,
-                    bills: monnaies.map(m => ({
-                        monaie: m.valeur,
-                        quantite: m.quantite
-                    }))
-                }
-
-                const url = "http://localhost:8080/api/v1/purchase";
-                var result = await fetch(
-                    url,
-                    {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payementDTO),
-                    }
-                )
-                const data = await result.json()
-                onPayementEffectue("CASH", data);
-                
-            } else {
-                alert(`Montant insuffisant. Il manque ${(totalAPayer - totalSaisie).toFixed(2)} Ar`);
+            
+            if (totalSaisie < totalAPayer) {
+                showError(`Montant insuffisant. Il manque ${(totalAPayer - totalSaisie).toFixed(2)} Ar`, 'warning');
+                return;
             }
-        } else if (paymentMethod === 'qr' && qrFile) {
-            alert('Paiement par QR code en cours de traitement...');
-            // Logique de paiement QR ici
+
+            // Valider les saisies de monnaie
+            for (const monnaie of monnaies) {
+                if (!monnaie.valeur || !monnaie.quantite) {
+                    showError('Veuillez remplir tous les champs de monnaie', 'warning');
+                    return;
+                }
+                if (parseFloat(monnaie.valeur) <= 0 || parseFloat(monnaie.quantite) <= 0) {
+                    showError('Les valeurs de monnaie doivent être positives', 'warning');
+                    return;
+                }
+            }
+
+            await processCashPayment();
+        } else if (paymentMethod === 'qr') {
+            if (!qrFile) {
+                showError('Veuillez uploader un code QR', 'warning');
+                return;
+            }
+            await processQrPayment();
         }
+    };
+
+    const processCashPayment = async () => {
+        try {
+            setPaymentLoading(true);
+            setError(null);
+
+            const payementDTO = {
+                items: cart.map(item => ({
+                    boissonId: item.idBoisson,
+                    quantite: item.quantiteAchat
+                })),
+                mode: "CASH",
+                compteQR: null,
+                bills: monnaies.map(m => ({
+                    monaie: m.valeur,
+                    quantite: m.quantite
+                }))
+            };
+
+            const url = "http://localhost:8080/api/v1/purchase";
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payementDTO),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Erreur ${response.status}: ${errorText || 'Erreur lors du paiement'}`);
+            }
+
+            const data = await response.json();
+            onPayementEffectue("CASH", data);
+            
+        } catch (error) {
+            console.error('Erreur lors du paiement:', error);
+            showError(error instanceof Error ? error.message : 'Erreur lors du traitement du paiement');
+        } finally {
+            setPaymentLoading(false);
+        }
+    };
+
+    const processQrPayment = async () => {
+        try {
+            setPaymentLoading(true);
+            setError(null);
+
+            const qrText = await decodeQRCode(qrFile!);
+            
+            const payementDTO = {
+                items: cart.map(item => ({
+                    boissonId: item.idBoisson,
+                    quantite: item.quantiteAchat
+                })),
+                mode: "QR",
+                compteQR: qrText,
+                bills: []
+            };
+
+            const url = "http://localhost:8080/api/v1/purchase";
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payementDTO),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Erreur ${response.status}: ${errorText || 'Erreur lors du paiement QR'}`);
+            }
+
+            const data = await response.json();
+            onPayementEffectue("QR", data);
+            
+        } catch (error) {
+            console.error('Erreur lors du paiement QR:', error);
+            showError(error instanceof Error ? error.message : 'Erreur lors du traitement du paiement QR');
+            setPaymentLoading(false);
+        }
+    };
+
+    const decodeQRCode = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            img.onload = () => {
+                try {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx!.drawImage(img, 0, 0);
+
+                    const imageData = ctx!.getImageData(0, 0, canvas.width, canvas.height);
+                    const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+                    if (code) {
+                        resolve(code.data);
+                    } else {
+                        reject(new Error('Aucun QR code trouvé dans l\'image. Veuillez vérifier la qualité de l\'image.'));
+                    }
+                } catch (error) {
+                    reject(new Error('Erreur lors du décodage du QR code'));
+                }
+            };
+
+            img.onerror = () => reject(new Error('Erreur de chargement de l\'image'));
+            img.src = URL.createObjectURL(file);
+        });
     };
 
     const canProceedToPayment = cart.length > 0;
@@ -177,10 +329,35 @@ export function PaymentModal({ handleClose, onPayementEffectue }: { handleClose:
                             </p>
                         </div>
                     </div>
-                    <button onClick={handleClose} className="p-2 hover:bg-slate-700 rounded-lg transition-colors">
+                    <button 
+                        onClick={handleClose} 
+                        disabled={paymentLoading}
+                        className="p-2 hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
                         <X className="w-6 h-6 text-slate-400" />
                     </button>
                 </div>
+
+                {/* Message d'erreur */}
+                {error && (
+                    <div className={`mx-6 mt-4 p-4 rounded-lg border ${
+                        error.type === 'error' 
+                            ? 'bg-red-900/20 border-red-500 text-red-200' 
+                            : error.type === 'warning'
+                            ? 'bg-yellow-900/20 border-yellow-500 text-yellow-200'
+                            : 'bg-blue-900/20 border-blue-500 text-blue-200'
+                    }`}>
+                        <div className="flex items-center justify-between">
+                            <span>{error.message}</span>
+                            <button 
+                                onClick={() => setError(null)}
+                                className="text-current hover:opacity-70"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
+                    </div>
+                )}
 
                 {/* Content */}
                 <div className="flex-1 overflow-y-auto p-6">
@@ -212,7 +389,10 @@ export function PaymentModal({ handleClose, onPayementEffectue }: { handleClose:
                             {/* Liste des boissons */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {loading ? (
-                                    <p className="text-slate-400 col-span-2 text-center py-8">Chargement...</p>
+                                    <div className="col-span-2 flex flex-col items-center justify-center py-12">
+                                        <Loader2 className="w-12 h-12 text-green-400 animate-spin mb-4" />
+                                        <p className="text-slate-400 text-lg">Chargement des boissons...</p>
+                                    </div>
                                 ) : filteredBoissons.length === 0 ? (
                                     <p className="text-slate-400 col-span-2 text-center py-8">Aucune boisson trouvée</p>
                                 ) : (
@@ -308,20 +488,22 @@ export function PaymentModal({ handleClose, onPayementEffectue }: { handleClose:
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                                     <button
                                         onClick={() => setPaymentMethod('liquide')}
+                                        disabled={paymentLoading}
                                         className={`p-6 rounded-lg border-2 transition-all ${paymentMethod === 'liquide'
                                             ? 'border-green-500 bg-green-500/10'
                                             : 'border-slate-600 hover:border-slate-500'
-                                            }`}
+                                            } disabled:opacity-50 disabled:cursor-not-allowed`}
                                     >
                                         <Wallet className="w-12 h-12 text-green-400 mx-auto mb-3" />
                                         <p className="text-white font-semibold text-center">Paiement Liquide</p>
                                     </button>
                                     <button
                                         onClick={() => setPaymentMethod('qr')}
+                                        disabled={paymentLoading}
                                         className={`p-6 rounded-lg border-2 transition-all ${paymentMethod === 'qr'
                                             ? 'border-green-500 bg-green-500/10'
                                             : 'border-slate-600 hover:border-slate-500'
-                                            }`}
+                                            } disabled:opacity-50 disabled:cursor-not-allowed`}
                                     >
                                         <QrCode className="w-12 h-12 text-green-400 mx-auto mb-3" />
                                         <p className="text-white font-semibold text-center">Bon d'achat QR</p>
@@ -346,7 +528,8 @@ export function PaymentModal({ handleClose, onPayementEffectue }: { handleClose:
                                                                 placeholder="Ex: 500"
                                                                 value={monnaie.valeur}
                                                                 onChange={(e) => handleMonnaieChange(index, "valeur", e.target.value)}
-                                                                className="w-full border-2 border-slate-600 rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all bg-slate-700 text-white"
+                                                                disabled={paymentLoading}
+                                                                className="w-full border-2 border-slate-600 rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all bg-slate-700 text-white disabled:opacity-50"
                                                             />
                                                         </div>
                                                         <div>
@@ -359,14 +542,15 @@ export function PaymentModal({ handleClose, onPayementEffectue }: { handleClose:
                                                                 placeholder="Ex: 10"
                                                                 value={monnaie.quantite}
                                                                 onChange={(e) => handleMonnaieChange(index, "quantite", e.target.value)}
-                                                                className="w-full border-2 border-slate-600 rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all bg-slate-700 text-white"
+                                                                disabled={paymentLoading}
+                                                                className="w-full border-2 border-slate-600 rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all bg-slate-700 text-white disabled:opacity-50"
                                                             />
                                                         </div>
                                                     </div>
                                                     <button
                                                         onClick={() => supprimerLigneMonnaie(index)}
-                                                        disabled={monnaies.length === 1}
-                                                        className="mt-7 bg-red-500 hover:bg-red-600 disabled:bg-slate-600 disabled:cursor-not-allowed text-white p-3 rounded-lg transition-colors"
+                                                        disabled={monnaies.length === 1 || paymentLoading}
+                                                        className="mt-7 bg-red-500 hover:bg-red-600 disabled:bg-slate-600 disabled:cursor-not-allowed text-white p-3 rounded-lg transition-colors disabled:opacity-50"
                                                         title="Supprimer"
                                                     >
                                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -378,7 +562,8 @@ export function PaymentModal({ handleClose, onPayementEffectue }: { handleClose:
 
                                             <button
                                                 onClick={ajouterLigneMonnaie}
-                                                className="w-full border-2 border-dashed border-slate-600 hover:border-green-500 text-slate-400 hover:text-green-400 py-3 rounded-lg transition-all flex items-center justify-center gap-2 font-medium"
+                                                disabled={paymentLoading}
+                                                className="w-full border-2 border-dashed border-slate-600 hover:border-green-500 text-slate-400 hover:text-green-400 py-3 rounded-lg transition-all flex items-center justify-center gap-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -414,9 +599,15 @@ export function PaymentModal({ handleClose, onPayementEffectue }: { handleClose:
                                                 onChange={handleQrUpload}
                                                 className="hidden"
                                                 id="qr-upload"
+                                                disabled={paymentLoading || qrLoading}
                                             />
-                                            <label htmlFor="qr-upload" className="cursor-pointer">
-                                                {qrPreview ? (
+                                            <label htmlFor="qr-upload" className={`cursor-pointer ${(paymentLoading || qrLoading) ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                                                {qrLoading ? (
+                                                    <div className="flex flex-col items-center">
+                                                        <Loader2 className="w-12 h-12 text-green-400 animate-spin mb-4" />
+                                                        <p className="text-slate-400">Chargement du QR code...</p>
+                                                    </div>
+                                                ) : qrPreview ? (
                                                     <div>
                                                         <img src={qrPreview} alt="QR Preview" className="max-w-xs mx-auto rounded-lg mb-4" />
                                                         <p className="text-green-400 font-semibold">QR code chargé avec succès</p>
@@ -445,9 +636,10 @@ export function PaymentModal({ handleClose, onPayementEffectue }: { handleClose:
                             </div>
                             <button
                                 onClick={() => setStep(2)}
-                                disabled={!canProceedToPayment}
-                                className="px-8 py-3 bg-green-500 hover:bg-green-600 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
+                                disabled={!canProceedToPayment || paymentLoading}
+                                className="px-8 py-3 bg-green-500 hover:bg-green-600 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
                             >
+                                {paymentLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                                 Payer
                             </button>
                         </>
@@ -455,16 +647,18 @@ export function PaymentModal({ handleClose, onPayementEffectue }: { handleClose:
                         <>
                             <button
                                 onClick={() => setStep(1)}
-                                className="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-lg transition-colors"
+                                disabled={paymentLoading}
+                                className="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                             >
                                 Retour
                             </button>
                             <button
                                 onClick={handlePayment}
-                                disabled={!canCompletePayment}
-                                className="px-8 py-3 bg-green-500 hover:bg-green-600 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
+                                disabled={!canCompletePayment || paymentLoading}
+                                className="px-8 py-3 bg-green-500 hover:bg-green-600 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
                             >
-                                Confirmer le paiement
+                                {paymentLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                                {paymentLoading ? 'Traitement...' : 'Confirmer le paiement'}
                             </button>
                         </>
                     )}

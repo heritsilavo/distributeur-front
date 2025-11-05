@@ -50,6 +50,7 @@ export default function DashboardTemplate({ children }: DashboardTemplateProps) 
     const menuButtons = [
         { id: "boissons", url:"/dashboard/boissons", icon: "🧃", label: "Gérer les boissons" },
         { id: "caisse", url:"/dashboard/caisse", icon: "📦", label: "Caisse" },
+        { id: "bon-achat", url:"/dashboard/bon-achat", icon: "🎫", label: "Bon d'achat" },
         { id: "historique", url:"/dashboard/historique", icon: "⚙️", label: "Historique d'achat" },
         { id: "dashboard", url:"/dashboard", icon: "📊", label: "Tableau de bord" },
     ];
