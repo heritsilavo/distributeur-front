@@ -188,7 +188,7 @@ export default function CaissePage() {
         </div>
 
 
-        {/* Argent QR */}
+        {/* Argent QR         */}
         <div className="p-4 rounded-2xl bg-white dark:bg-gray-800 shadow transition-colors">
           <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
             💳 Argent QR
