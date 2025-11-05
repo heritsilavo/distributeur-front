@@ -14,6 +14,19 @@ export default function BoissonsPage() {
   const [boissons, setBoissons] = useState<Boisson[]>([]);
   const [selected, setSelected] = useState<Boisson | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [showDeleteForm, setShowDeleteForm] = useState(false);
+  const [deleteForm, setDeleteForm] = useState({
+    idBoisson: 0,
+    quantite: 0
+  })
+  const hideDeleteForm = function () {
+    setDeleteForm({
+      idBoisson:0,
+      quantite:0
+    })
+    setShowDeleteForm(false)
+    setSelected(null)
+  }
 
   const [form, setForm] = useState({
     nomBoisson: "",
@@ -48,11 +61,29 @@ export default function BoissonsPage() {
     load();
   };
 
-  const del = async (id: number) => {
-    if (confirm("Supprimer cette boisson ?")) {
-      await fetch(`http://localhost:8080/api/v1/beverages/${id}`, {
+  const modif = async () => {
+    if (selected == null)
+      return
+
+    await fetch(`http://localhost:8080/api/v1/beverages/${selected.idBoisson}`,{
+      method : "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+
+    setShowForm(false);
+    setSelected(null);
+    setForm({ nomBoisson: "", prixBoisson: 0, quantiteDispo: 0 });
+    load();
+  }
+
+  const del = async () => {
+    if (confirm("Confirmer la suppression ?") && !!selected) {
+      await fetch(`http://localhost:8080/api/v1/beverages/${selected?.idBoisson}?quantite=${deleteForm.quantite}`, {
         method: "DELETE",
+
       });
+      hideDeleteForm()
       load();
     }
   };
@@ -158,7 +189,10 @@ export default function BoissonsPage() {
                             Modifier
                           </button>
                           <button
-                            onClick={() => del(b.idBoisson)}
+                            onClick={() => {
+                              setSelected(b);
+                              setShowDeleteForm(true)
+                            }}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-900 hover:bg-red-100 dark:hover:bg-red-800 rounded-md transition-colors"
                             title="Supprimer"
                           >
@@ -174,6 +208,63 @@ export default function BoissonsPage() {
             </table>
           </div>
         </div>
+
+        {/* Delete form */}
+        {showDeleteForm && (
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md">
+              {/* Header */}
+              <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                  Supprimer la boisson ?
+                </h2>
+                <button
+                  onClick={hideDeleteForm}
+                  className="text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Form */}
+              <div className="px-6 py-5 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">
+                    Quantite à supprimer
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={selected?.quantiteDispo}
+                    placeholder="Ex: 5"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    value={deleteForm.quantite}
+                    onChange={(e) => setDeleteForm({ ...deleteForm, quantite: parseInt(e.target.value)})}
+                  />
+                </div>
+                <p className="text-red-600 font-bold">Supprimer {deleteForm.quantite} unités de {selected?.nomBoisson} </p>
+              </div>
+
+              {/* Footer */}
+              <div className="flex justify-end gap-3 px-6 py-4 bg-gray-50 dark:bg-gray-900 rounded-b-xl">
+                <button
+                  onClick={hideDeleteForm}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                >
+                  Annuler
+                </button>
+                <button
+                
+                  onClick={del}
+                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Supprimer la boisson
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
 
         {/* Modal Form */}
         {showForm && (
@@ -246,7 +337,8 @@ export default function BoissonsPage() {
                   Annuler
                 </button>
                 <button
-                  onClick={save}
+                
+                  onClick={selected ? modif : save}
                   className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   {selected ? "Enregistrer les modifications" : "Ajouter"}
