@@ -1,9 +1,5 @@
-// ============================================
-// COMPOSANT: Modal Retirer Monnaies
-
 import { useState } from "react";
 
-// ============================================
 interface ModalRetirerMonnaiesProps {
     show: boolean;
     onClose: () => void;
@@ -12,19 +8,19 @@ interface ModalRetirerMonnaiesProps {
 }
 
 export function ModalRetirerMonnaies({ show, onClose, onRetirer, caisse }: ModalRetirerMonnaiesProps) {
-    const [typeRetrait, setTypeRetrait] = useState<"caisseLiquide" | "reserveMonaie" | "caisseVirtuelle">("caisseLiquide");
+    const [typeRetrait, setTypeRetrait] = useState<"CAISSE_LIQUIDE" | "CAISSE_VIRTUELE" | "RESERVE_MONAIE">("CAISSE_LIQUIDE");
     const [montantVirtuel, setMontantVirtuel] = useState("");
     const [billetsRetirer, setBilletsRetirer] = useState<Record<string, string>>({});
 
     const handleClose = () => {
-        setTypeRetrait("caisseLiquide");
+        setTypeRetrait("CAISSE_LIQUIDE");
         setMontantVirtuel("");
         setBilletsRetirer({});
         onClose();
     };
 
     const handleRetirer = () => {
-        if (typeRetrait === "caisseVirtuelle") {
+        if (typeRetrait === "CAISSE_VIRTUELE") {
             if (!montantVirtuel || Number(montantVirtuel) <= 0) {
                 return;
             }
@@ -35,8 +31,8 @@ export function ModalRetirerMonnaies({ show, onClose, onRetirer, caisse }: Modal
         } else {
             const billets = Object.entries(billetsRetirer)
                 .filter(([_, qty]) => qty && Number(qty) > 0)
-                .map(([valeur, quantite]) => ({
-                    valeur: Number(valeur),
+                .map(([monaie, quantite]) => ({
+                    monaie: Number(monaie),
                     quantite: Number(quantite)
                 }));
 
@@ -51,14 +47,14 @@ export function ModalRetirerMonnaies({ show, onClose, onRetirer, caisse }: Modal
         }
     };
 
-    const handleBilletChange = (valeur: string, quantite: string) => {
-        setBilletsRetirer({ ...billetsRetirer, [valeur]: quantite });
+    const handleBilletChange = (monaie: string, quantite: string) => {
+        setBilletsRetirer({ ...billetsRetirer, [monaie]: quantite });
     };
 
     const getBilletsDisponibles = () => {
-        if (typeRetrait === "caisseLiquide") {
+        if (typeRetrait === "CAISSE_LIQUIDE") {
             return caisse?.caisseLiquide || [];
-        } else if (typeRetrait === "reserveMonaie") {
+        } else if (typeRetrait === "RESERVE_MONAIE") {
             return caisse?.monnaieRendue || [];
         }
         return [];
@@ -67,7 +63,7 @@ export function ModalRetirerMonnaies({ show, onClose, onRetirer, caisse }: Modal
     const calculateTotal = () => {
         return Object.entries(billetsRetirer)
             .filter(([_, qty]) => qty && Number(qty) > 0)
-            .reduce((acc, [valeur, quantite]) => acc + Number(valeur) * Number(quantite), 0);
+            .reduce((acc, [monaie, quantite]) => acc + Number(monaie) * Number(quantite), 0);
     };
 
     if (!show) return null;
@@ -111,14 +107,14 @@ export function ModalRetirerMonnaies({ show, onClose, onRetirer, caisse }: Modal
                             }}
                             className="w-full border-2 border-gray-300 dark:border-gray-600 rounded-lg p-3 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                         >
-                            <option value="caisseLiquide">💵 Caisse Liquide</option>
-                            <option value="reserveMonaie">🪙 Réserve de Monnaie</option>
-                            <option value="caisseVirtuelle">💳 Caisse Virtuelle</option>
+                            <option value="CAISSE_LIQUIDE">💵 Caisse Liquide</option>
+                            <option value="RESERVE_MONAIE">🪙 Réserve de Monnaie</option>
+                            <option value="CAISSE_VIRTUELE">💳 Caisse Virtuelle</option>
                         </select>
                     </div>
 
                     {/* Si Caisse Virtuelle */}
-                    {typeRetrait === "caisseVirtuelle" && (
+                    {typeRetrait === "CAISSE_VIRTUELE" && (
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Montant à retirer (Ar)
@@ -135,7 +131,7 @@ export function ModalRetirerMonnaies({ show, onClose, onRetirer, caisse }: Modal
                     )}
 
                     {/* Si Caisse Liquide ou Réserve Monnaie */}
-                    {(typeRetrait === "caisseLiquide" || typeRetrait === "reserveMonaie") && (
+                    {(typeRetrait === "CAISSE_LIQUIDE" || typeRetrait === "RESERVE_MONAIE") && (
                         <div className="space-y-3">
                             <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                                 Billets à retirer
@@ -167,7 +163,7 @@ export function ModalRetirerMonnaies({ show, onClose, onRetirer, caisse }: Modal
                     )}
 
                     {/* Aperçu */}
-                    {typeRetrait !== "caisseVirtuelle" && (
+                    {typeRetrait !== "CAISSE_VIRTUELE" && (
                         <div className="bg-red-50 dark:bg-red-900 p-4 rounded-lg">
                             <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
                                 📊 Aperçu du retrait
@@ -175,11 +171,11 @@ export function ModalRetirerMonnaies({ show, onClose, onRetirer, caisse }: Modal
                             <div className="space-y-1 text-sm">
                                 {Object.entries(billetsRetirer)
                                     .filter(([_, qty]) => qty && Number(qty) > 0)
-                                    .map(([valeur, quantite]) => (
-                                        <div key={valeur} className="flex justify-between text-gray-700 dark:text-gray-300">
-                                            <span>{Number(valeur).toLocaleString()} Ar × {quantite}</span>
+                                    .map(([monaie, quantite]) => (
+                                        <div key={monaie} className="flex justify-between text-gray-700 dark:text-gray-300">
+                                            <span>{Number(monaie).toLocaleString()} Ar × {quantite}</span>
                                             <span className="font-semibold">
-                                                = {(Number(valeur) * Number(quantite)).toLocaleString()} Ar
+                                                = {(Number(monaie) * Number(quantite)).toLocaleString()} Ar
                                             </span>
                                         </div>
                                     ))}

@@ -52,14 +52,16 @@ export default function CaissePage() {
     }
 
     console.log("Monnaies à ajouter:", monnaiesValides);
+    var ajoutDto = monnaiesValides.map(item => ({
+      monaie: parseInt(item.valeur),
+      quantite: parseInt(item.quantite)
+    }));
 
-    // TODO: Implémenter l'appel API
-    /*
     try {
-      const res = await fetch("http://localhost:8080/api/v1/caisse/ajouter-monnaie", {
+      const res = await fetch("http://localhost:8080/api/v1/caisse/ajouterMonaieReserve", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(monnaiesValides),
+        body: JSON.stringify(ajoutDto),
       });
       if (!res.ok) throw new Error("Erreur lors de l'ajout");
       await fetchCaisse();
@@ -68,16 +70,13 @@ export default function CaissePage() {
     } catch (err) {
       showNotification("Erreur lors de l'ajout", "error");
     }
-    */
   };
 
   const retirerMonnaies = async (data: any) => {
     console.log("Données de retrait:", data);
 
-    // TODO: Implémenter l'appel API
-    /*
     try {
-      const res = await fetch("http://localhost:8080/api/v1/caisse/retirer-monnaie", {
+      const res = await fetch("http://localhost:8080/api/v1/caisse/retierMonnaie", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -89,7 +88,6 @@ export default function CaissePage() {
     } catch (err) {
       showNotification("Erreur lors du retrait", "error");
     }
-    */
   };
 
   if (loading)
@@ -109,8 +107,8 @@ export default function CaissePage() {
       {notification.show && (
         <div
           className={`fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 ${notification.type === "success"
-              ? "bg-green-500 text-white"
-              : "bg-red-500 text-white"
+            ? "bg-green-500 text-white"
+            : "bg-red-500 text-white"
             }`}
         >
           {notification.message}
@@ -145,8 +143,8 @@ export default function CaissePage() {
                 <div
                   key={index}
                   className={`flex flex-col items-center p-3 rounded-xl border transition-colors ${isLow
-                      ? "border-red-400 bg-red-50 dark:bg-red-900 dark:border-red-400"
-                      : "border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"
+                    ? "border-red-400 bg-red-50 dark:bg-red-900 dark:border-red-400"
+                    : "border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"
                     }`}
                 >
                   <span className="text-gray-700 dark:text-gray-200 font-medium text-lg">
@@ -185,8 +183,8 @@ export default function CaissePage() {
                 <div
                   key={index}
                   className={`flex flex-col items-center p-3 rounded-xl border transition-colors ${isLow
-                      ? "border-orange-400 bg-orange-50 dark:bg-orange-900 dark:border-orange-400"
-                      : "border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"
+                    ? "border-orange-400 bg-orange-50 dark:bg-orange-900 dark:border-orange-400"
+                    : "border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"
                     }`}
                 >
                   <span className="text-gray-700 dark:text-gray-200 font-medium text-lg">
@@ -211,7 +209,10 @@ export default function CaissePage() {
           </p>
         </div>
 
-        <button
+        {/* Total Général avec bouton Retirer */}
+        <div className="col-span-1 md:col-span-2 space-y-3">
+
+          <button
             onClick={() => setShowModalRetirer(true)}
             className="w-full bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2 font-semibold"
           >
@@ -219,8 +220,6 @@ export default function CaissePage() {
             Retirer des monnaies
           </button>
 
-        {/* Total Général avec bouton Retirer */}
-        <div className="col-span-1 md:col-span-2 space-y-3">
           <div className="p-6 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900 dark:to-emerald-900 rounded-2xl text-center shadow-lg transition-colors">
             <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
               💰 Total Général
@@ -229,6 +228,7 @@ export default function CaissePage() {
               {caisse.total.toLocaleString()} Ar
             </p>
           </div>
+
         </div>
       </div>
 
